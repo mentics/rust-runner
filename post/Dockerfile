@@ -1,4 +1,4 @@
-FROM rust-runner-mid as build
+FROM rust-runner-mid
 LABEL org.opencontainers.image.source = "https://github.com/mentics/rust-runner"
 
 USER root
@@ -10,6 +10,7 @@ EOT
 
 USER gh
 WORKDIR /home/gh/actions-runner
-CMD ./run.sh
+#ENV PATH=/home/gh/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-FROM build
+CMD ["/bin/bash","-l","-c","./run.sh"]
+#CMD ["/bin/bash","-l","-c","echo ${PATH}"]

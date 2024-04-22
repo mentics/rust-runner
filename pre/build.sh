@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-sudo docker build --progress plain -t rust-runner-pre .
+docker build --progress plain -t rust-runner-pre .

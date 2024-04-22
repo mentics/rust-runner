@@ -1,11 +1,15 @@
 FROM ubuntu
 
+SHELL ["/bin/bash", "-l", "-c"]
+
 RUN <<EOT
 apt-get update
-apt-get install -y curl libdigest-sha-perl
+apt-get install -y curl libdigest-sha-perl build-essential
 useradd -m gh
 chsh -s /bin/bash gh
 EOT
+
+RUN apt-get install -y docker.io
 
 USER gh
 RUN <<EOT
@@ -17,6 +21,9 @@ curl -o actions-runner-linux-arm64-2.315.0.tar.gz -L https://github.com/actions/
 echo "d9d58b178eca5fb65d93d151f3b62bde967f8cbec7c72e9b0976e9312b7f7dda  actions-runner-linux-arm64-2.315.0.tar.gz" | shasum -a 256 -c
 tar xzf ./actions-runner-linux-arm64-2.315.0.tar.gz
 EOT
+
+RUN cargo install sccache
+ENV RUSTC_WRAPPER=sccache
 
 USER root
 RUN <<EOT
