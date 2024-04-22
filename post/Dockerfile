@@ -10,7 +10,5 @@ EOT
 
 USER gh
 WORKDIR /home/gh/actions-runner
-#ENV PATH=/home/gh/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-CMD ["/bin/bash","-l","-c","./run.sh"]
-#CMD ["/bin/bash","-l","-c","echo ${PATH}"]
+CMD ["/bin/bash","-l","-c","sccache --start-server && ./run.sh"]

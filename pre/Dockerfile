@@ -22,7 +22,16 @@ echo "d9d58b178eca5fb65d93d151f3b62bde967f8cbec7c72e9b0976e9312b7f7dda  actions-
 tar xzf ./actions-runner-linux-arm64-2.315.0.tar.gz
 EOT
 
-RUN cargo install sccache
+RUN <<EOT
+mkdir -p /tmp/sccache
+cd /tmp/sccache
+curl -L -o sccache.tgz https://github.com/mozilla/sccache/releases/download/v0.8.0/sccache-v0.8.0-aarch64-unknown-linux-musl.tar.gz
+tar xfz sccache.tgz
+cd sccache-*
+mv sccache ${HOME}/.cargo/bin/
+cd
+rm -rf /tmp/sccache
+EOT
 ENV RUSTC_WRAPPER=sccache
 
 USER root
