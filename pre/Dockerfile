@@ -1,20 +1,25 @@
 FROM ubuntu
 
+ARG DOCKER_GROUP_ID
+
 SHELL ["/bin/bash", "-l", "-c"]
 
 RUN <<EOT
 apt-get update
-apt-get install -y curl libdigest-sha-perl build-essential
+apt-get install -y curl libdigest-sha-perl build-essential musl-tools cmake docker.io
+groupadd -g ${DOCKER_GROUP_ID} docker
+chmod 660 /var/run/docker.sock
+
 useradd -m gh
 chsh -s /bin/bash gh
+gpasswd -a gh docker
 EOT
-
-RUN apt-get install -y docker.io
 
 USER gh
 RUN <<EOT
 cd /home/gh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y --profile=minimal
+rustup target add aarch64-unknown-linux-musl
 
 mkdir -p actions-runner && cd actions-runner
 curl -o actions-runner-linux-arm64-2.315.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.315.0/actions-runner-linux-arm64-2.315.0.tar.gz
@@ -37,9 +42,6 @@ ENV RUSTC_WRAPPER=sccache
 USER root
 RUN <<EOT
 /home/gh/actions-runner/bin/installdependencies.sh
-apt-get remove -y curl libdigest-sha-perl
-apt-get autoremove -y
-apt-get clean
 EOT
 
 USER gh

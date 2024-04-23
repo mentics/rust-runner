@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-docker run -it ghcr.io/mentics/rust-runner:latest
+docker run -it --userns-remap=docker:docker -v /var/run/docker.sock:/var/run/docker.sock rust-runner
